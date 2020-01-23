@@ -7,6 +7,14 @@ import java.util.*;
 
 public class MemoryManagement 
 {
+  public static void printBitSet(BitSet b){
+    for(int i = 0; i < b.length(); i++)
+      if(b.get(i) == true)
+        System.out.print(1);
+      else
+        System.out.print(0);
+    System.out.println();
+  }
   public static void main(String[] args) 
   {
     ControlPanel controlPanel;

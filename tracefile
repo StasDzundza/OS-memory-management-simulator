@@ -1,17 +1,6 @@
 READ 0 ... okay
 READ 4005 ... okay
 READ 0 ... okay
-READ 0 ... okay
 WRITE 4066 ... okay
 READ 0 ... okay
 WRITE f3b5e ... page fault
-WRITE 2cf7 ... okay
-WRITE 2cf7 ... okay
-WRITE 2b9c5 ... okay
-WRITE 2b9c5 ... okay
-READ 2b9c5 ... okay
-READ 2b9c5 ... okay
-READ 2b9c5 ... okay
-READ 2b9c5 ... okay
-READ 2b9c5 ... okay
-READ 5795d ... okay

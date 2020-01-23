@@ -961,7 +961,7 @@ public class ControlPanel extends Frame
     lastTouchTimeValueLabel.setText( Integer.toString( page.lastTouchTime ) );
     lowValueLabel.setText(Long.toString( page.low , Kernel.addressradix ) );
     highValueLabel.setText(Long.toString( page.high , Kernel.addressradix ) );
-    pageCounterValueLabel.setText(Integer.toString(page.page_counter));
+    pageCounterValueLabel.setText(Kernel.convertToString(page.page_counter));
   }
 
   public void setStatus(String status) {

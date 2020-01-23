@@ -1,4 +1,6 @@
-public class Page 
+import java.util.BitSet;
+
+public class Page
 {
   public int id;
   public int physical;
@@ -9,12 +11,11 @@ public class Page
   public long high;
   public long low;
   //my field
-  public int page_counter;
-  public static int page_table_counter = 0;
+  public BitSet page_counter;
 
   public Page( int id, int physical, byte R, byte M, int inMemTime, int lastTouchTime, long high, long low ) 
   {
-    this.page_counter = 0;
+    this.page_counter = new BitSet(8);
 
     this.id = id;
     this.physical = physical;
