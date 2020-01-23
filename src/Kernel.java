@@ -23,6 +23,7 @@ public class Kernel extends Thread
   public int runcycles;
   public long block = (int) Math.pow(2,12);
   public static byte addressradix = 10;
+  public int time_unit = 0;
 
   public void init( String commands , String config )  
   {
@@ -385,6 +386,16 @@ public class Kernel extends Thread
     }
   }
 
+  public void interrupt_by_timer(){
+    for(int i = 0; i < virtPageNum; i++){
+      Page page = (Page)memVector.elementAt(i);
+      if(page.physical!=-1){
+        page.page_counter+=page.R;
+        page.R = 0;
+      }
+    }
+  }
+
   public void run()
   {
     step();
@@ -415,6 +426,11 @@ public class Kernel extends Thread
       controlPanel.pageFaultValueLabel.setText( "NO" );
     }
 
+    if(time_unit == 2){
+      time_unit = 0;
+      interrupt_by_timer();
+    }
+    
     if ( instruct.inst.startsWith( "READ" ) ) 
     {
       Page page = ( Page ) memVector.elementAt( Virtual2Physical.pageNum( instruct.addr , virtPageNum , block ) );
@@ -482,18 +498,19 @@ public class Kernel extends Thread
     for ( i = 0; i < virtPageNum; i++ ) 
     {
       Page page = ( Page ) memVector.elementAt( i );
-      if ( page.R == 1 && page.lastTouchTime == 10 )
+      /*if ( page.R == 1 && page.lastTouchTime == 10 )
       {
         //adding a R byte to counter after every 10ns(interruption by timer)
         page.page_counter+=page.R;
         page.R = 0;
-      }
+      }*/
       if ( page.physical != -1 ) 
       {
         page.inMemTime = page.inMemTime + 10;
         page.lastTouchTime = page.lastTouchTime + 10;
       }
     }
+    time_unit++;
     runs++;
     controlPanel.timeValueLabel.setText( Integer.toString( runs*10 ) + " (ns)" );
   }
