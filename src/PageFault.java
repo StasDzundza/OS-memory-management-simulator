@@ -91,8 +91,8 @@ public class PageFault {
     page.physical = -1;
   }
 
-  //Least Recently Used with counter
-  public static void replacePageByLruWithCounter(Vector mem , int virtPageNum , int replacePageNum , ControlPanel controlPanel){
+  //Not Frequently Used
+  public static void replacePageByNFU(Vector mem , int virtPageNum , int replacePageNum , ControlPanel controlPanel){
     int min_counter = Integer.MAX_VALUE;
     int outdated_page_index = 0;
     for(int i = 0; i < virtPageNum; i++){

@@ -429,14 +429,12 @@ public class Kernel extends Thread
         {
           System.out.println( "READ " + Long.toString(instruct.addr , addressradix) + " ... page fault" );
         }
-        PageFault.replacePageByLruWithCounter( memVector , virtPageNum , Virtual2Physical.pageNum( instruct.addr , virtPageNum , block ) , controlPanel );
+        PageFault.replacePageByNFU( memVector , virtPageNum , Virtual2Physical.pageNum( instruct.addr , virtPageNum , block ) , controlPanel );
         controlPanel.pageFaultValueLabel.setText( "YES" );
       } 
       else 
       {
-        Page.page_table_counter++;
         page.R = 1;
-        page.page_counter = Page.page_table_counter;
         controlPanel.pageCounterValueLabel.setText(Integer.toString(page.page_counter));
         page.lastTouchTime = 0;   
         if ( doFileLog )
@@ -463,14 +461,12 @@ public class Kernel extends Thread
         {
            System.out.println( "WRITE " + Long.toString(instruct.addr , addressradix) + " ... page fault" );
         }
-        PageFault.replacePageByLruWithCounter( memVector , virtPageNum , Virtual2Physical.pageNum( instruct.addr , virtPageNum , block ) , controlPanel );
+        PageFault.replacePageByNFU( memVector , virtPageNum , Virtual2Physical.pageNum( instruct.addr , virtPageNum , block ) , controlPanel );
         controlPanel.pageFaultValueLabel.setText( "YES" );
       } 
       else 
       {
-        Page.page_table_counter++;
         page.M = 1;
-        page.page_counter = Page.page_table_counter;
         controlPanel.pageCounterValueLabel.setText(Integer.toString(page.page_counter));
         page.lastTouchTime = 0;
         if ( doFileLog )
@@ -486,8 +482,10 @@ public class Kernel extends Thread
     for ( i = 0; i < virtPageNum; i++ ) 
     {
       Page page = ( Page ) memVector.elementAt( i );
-      if ( page.R == 1 && page.lastTouchTime == 10 ) 
+      if ( page.R == 1 && page.lastTouchTime == 10 )
       {
+        //adding a R byte to counter after every 10ns(interruption by timer)
+        page.page_counter+=page.R;
         page.R = 0;
       }
       if ( page.physical != -1 ) 
