@@ -430,7 +430,7 @@ public class Kernel extends Thread
       time_unit = 0;
       interrupt_by_timer();
     }
-    
+
     if ( instruct.inst.startsWith( "READ" ) ) 
     {
       Page page = ( Page ) memVector.elementAt( Virtual2Physical.pageNum( instruct.addr , virtPageNum , block ) );
