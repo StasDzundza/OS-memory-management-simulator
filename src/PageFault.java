@@ -97,19 +97,20 @@ public class PageFault {
     int outdated_page_index = 0;
     for(int i = 0; i < virtPageNum; i++){
       Page current_page = ( Page ) mem.elementAt(i);
-      int k = 0;
-      int number_of_zeroes = 0;
-      while(true){
-          if(current_page.page_counter.get(k) == false){
-              number_of_zeroes++;
+      if(current_page.physical!=-1) {
+        int k = 0;
+        int number_of_zeroes = 0;
+        while (true) {
+          if (current_page.page_counter.get(k) == false) {
+            number_of_zeroes++;
+          } else if (current_page.page_counter.get(k) == true || k == current_page.page_counter.length() - 1) {
+            break;
           }
-          else if(current_page.page_counter.get(k) == true || k == current_page.page_counter.length() - 1){
-              break;
-          }
-      }
-      if(number_of_zeroes>max_number_of_zeroes){
+        }
+        if (number_of_zeroes > max_number_of_zeroes) {
           max_number_of_zeroes = number_of_zeroes;
           outdated_page_index = i;
+        }
       }
     }
 

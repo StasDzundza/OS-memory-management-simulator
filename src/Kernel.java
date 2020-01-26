@@ -408,12 +408,14 @@ public class Kernel extends Thread
       }
     }
   }
+
   public void run()
   {
-    step();
+    //step();
     int time_unit = 0;
     while (runs != runcycles) 
     {
+
       if(time_unit == 2){
         time_unit = 0;
         interrupt_by_timer();
