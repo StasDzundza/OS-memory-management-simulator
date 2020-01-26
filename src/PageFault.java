@@ -101,11 +101,12 @@ public class PageFault {
         int k = 0;
         int number_of_zeroes = 0;
         while (true) {
-          if (current_page.page_counter.get(k) == false) {
+          if (current_page.page_counter[k] == 0 && k != current_page.page_counter.length - 1) {
             number_of_zeroes++;
-          } else if (current_page.page_counter.get(k) == true || k == current_page.page_counter.length() - 1) {
+          } else if (current_page.page_counter[k] == 1 || k == current_page.page_counter.length - 1) {
             break;
           }
+          k++;
         }
         if (number_of_zeroes > max_number_of_zeroes) {
           max_number_of_zeroes = number_of_zeroes;
@@ -114,8 +115,15 @@ public class PageFault {
       }
     }
 
+    //all counters is filled by ones
     if(max_number_of_zeroes == -1){
-        outdated_page_index = 0;//improve this
+        for(int i = 0; i < virtPageNum; i++) {
+            Page current_page = (Page) mem.elementAt(i);
+            if(current_page.physical!=-1){
+                outdated_page_index = i;
+                break;
+            }
+        }
     }
     Page outdated_page = ( Page ) mem.elementAt( outdated_page_index );
     Page new_page = ( Page ) mem.elementAt( replacePageNum );
@@ -127,6 +135,6 @@ public class PageFault {
     outdated_page.R = 0;
     outdated_page.M = 0;
     outdated_page.physical = -1;
-    outdated_page.page_counter.clear();
+    outdated_page.clear_counter();
   }
 }
