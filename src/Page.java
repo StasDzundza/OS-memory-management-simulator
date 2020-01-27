@@ -11,11 +11,12 @@ public class Page
   public long high;
   public long low;
 
-  public byte[] page_counter;
+  private long pageCounter;
+  private static int numberOfBitsInCounter = 8;
 
   public Page( int id, int physical, byte R, byte M, int inMemTime, int lastTouchTime, long high, long low ) 
   {
-    page_counter = new byte[]{0,0,0,0,0,0,0,0};
+    this.pageCounter = 0;
     this.id = id;
     this.physical = physical;
     this.R = R;
@@ -27,15 +28,21 @@ public class Page
   }
 
   public void clear_counter(){
-    for(int i = 0; i < page_counter.length; i++)
-      page_counter[i] = 0;
+    pageCounter = 0;
   }
 
   public void right_shift_counter(){
-    for (int i = page_counter.length - 1; i >= 1; i--) {
-      this.page_counter[i] = this.page_counter[i - 1];
-    }
-    this.page_counter[0] = this.R;
+    if(this.R == 1)
+      this.pageCounter = (this.pageCounter>>1)|(long)Math.pow(2,numberOfBitsInCounter-1);
+    else
+      this.pageCounter = this.pageCounter>>1;
   }
 
+  public void setLimitForCounter(int numberOfBitsInCounter){
+    this.numberOfBitsInCounter = numberOfBitsInCounter;
+  }
+
+  public long getPageCounter(){
+    return pageCounter;
+  }
 }

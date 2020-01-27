@@ -23,7 +23,10 @@ public class Kernel extends Thread
   public int runcycles;
   public long block = (int) Math.pow(2,12);
   public static byte addressradix = 10;
-  int time_unit = 0;
+
+  private int currentNumberOfCPUTicks = 0;
+  private static final int numberOfCPUTicksForPreemption = 2;
+
 
   public void init( String commands , String config ) {
     File f = new File( commands );
@@ -351,18 +354,6 @@ public class Kernel extends Thread
     controlPanel.paintPage( page );
   }
 
-  public static String convertToString(byte[] bitSet){
-    StringBuilder builder = new StringBuilder();
-    for(int i = 0; i < bitSet.length; i++){
-      if(bitSet[i] == 0)
-        builder.append(0);
-      else{
-        builder.append(1);
-      }
-    }
-    return builder.toString();
-  }
-
   private void printLogFile(String message) {
     String line;
     String temp = "";
@@ -396,7 +387,7 @@ public class Kernel extends Thread
     }
   }
 
-  public void interrupt_by_timer(){
+  public void mmTick(){
     for(int i = 0; i < virtPageNum; i++){
       Page page = (Page)memVector.elementAt(i);
       if(page.physical!=-1) {
@@ -436,9 +427,9 @@ public class Kernel extends Thread
       controlPanel.pageFaultValueLabel.setText( "NO" );
     }
 
-    if(time_unit == 2){
-      time_unit = 0;
-      interrupt_by_timer();
+    if(currentNumberOfCPUTicks == numberOfCPUTicksForPreemption){
+      currentNumberOfCPUTicks = 0;
+      mmTick();
     }
 
     if ( instruct.inst.startsWith( "READ" ) )
@@ -461,7 +452,7 @@ public class Kernel extends Thread
       else
       {
         page.R = 1;
-        controlPanel.pageCounterValueLabel.setText(convertToString(page.page_counter));
+        controlPanel.pageCounterValueLabel.setText(Long.toString(page.getPageCounter()));
         page.lastTouchTime = 0;
         if ( doFileLog )
         {
@@ -493,7 +484,7 @@ public class Kernel extends Thread
       else
       {
         page.M = 1;
-        controlPanel.pageCounterValueLabel.setText(convertToString(page.page_counter));
+        controlPanel.pageCounterValueLabel.setText(Long.toString(page.getPageCounter()));
         page.lastTouchTime = 0;
         if ( doFileLog )
         {
@@ -514,7 +505,7 @@ public class Kernel extends Thread
         page.lastTouchTime = page.lastTouchTime + 10;
       }
     }
-    time_unit++;
+    currentNumberOfCPUTicks++;
     runs++;
     controlPanel.timeValueLabel.setText( Integer.toString( runs*10 ) + " (ns)" );
   }

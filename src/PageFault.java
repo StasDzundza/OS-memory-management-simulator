@@ -93,30 +93,20 @@ public class PageFault {
 
   //Aging algorithm (Алгоритм старіння)
   public static void replacePageByAgingAlgorithm(Vector mem , int virtPageNum , int replacePageNum , ControlPanel controlPanel){
-    int max_number_of_zeroes = -1;
-    int outdated_page_index = 0;
+    long minCounter = Long.MAX_VALUE;
+    int outdated_page_index = -1;
     for(int i = 0; i < virtPageNum; i++){
       Page current_page = ( Page ) mem.elementAt(i);
       if(current_page.physical!=-1) {
-        int k = 0;
-        int number_of_zeroes = 0;
-        while (true) {
-          if (current_page.page_counter[k] == 0 && k != current_page.page_counter.length - 1) {
-            number_of_zeroes++;
-          } else if (current_page.page_counter[k] == 1 || k == current_page.page_counter.length - 1) {
-            break;
-          }
-          k++;
-        }
-        if (number_of_zeroes > max_number_of_zeroes) {
-          max_number_of_zeroes = number_of_zeroes;
+        if (current_page.getPageCounter() < minCounter) {
+          minCounter = current_page.getPageCounter();
           outdated_page_index = i;
         }
       }
     }
 
     //all counters is filled by ones
-    if(max_number_of_zeroes == -1){
+    if(outdated_page_index == -1){
         for(int i = 0; i < virtPageNum; i++) {
             Page current_page = (Page) mem.elementAt(i);
             if(current_page.physical!=-1){
@@ -125,6 +115,7 @@ public class PageFault {
             }
         }
     }
+
     Page outdated_page = ( Page ) mem.elementAt( outdated_page_index );
     Page new_page = ( Page ) mem.elementAt( replacePageNum );
     controlPanel.removePhysicalPage( outdated_page_index );
